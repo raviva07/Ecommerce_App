@@ -1,25 +1,41 @@
-HELP.md
+# ===============================
+# MAVEN
+# ===============================
 target/
 .mvn/wrapper/maven-wrapper.jar
+
+# Allow nested target folders inside src (rare but safe)
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
+# ===============================
+# SPRING BOOT
+# ===============================
+HELP.md
+
+# ===============================
+# STS (Spring Tool Suite)
+# ===============================
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
-.sts4-cache
+.sts4-cache/
 
-### IntelliJ IDEA ###
-.idea
+# ===============================
+# INTELLIJ IDEA
+# ===============================
+.idea/
 *.iws
 *.iml
 *.ipr
+out/
 
-### NetBeans ###
+# ===============================
+# NETBEANS
+# ===============================
 /nbproject/private/
 /nbbuild/
 /dist/
@@ -29,5 +45,24 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
+# ===============================
+# VS CODE
+# ===============================
 .vscode/
+
+# ===============================
+# OS FILES
+# ===============================
+.DS_Store
+Thumbs.db
+
+# ===============================
+# LOG FILES
+# ===============================
+*.log
+
+# ===============================
+# ENV FILES (IMPORTANT)
+# ===============================
+.env
+
