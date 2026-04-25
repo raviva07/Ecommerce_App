@@ -1,18 +1,26 @@
 // src/pages/auth/Login.jsx
 import React, { useState } from "react";
-import { useAuth } from "../../hooks/useAuth"; // ✅ USE CONTEXT
+import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth(); // ✅ important
+  const { login } = useAuth();
 
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,24 +28,23 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const res = await login(form); // ✅ USE CONTEXT LOGIN
+      const res = await login(form);
 
       if (!res.success) {
         setError(res.message);
         return;
       }
 
-      // ✅ NO localStorage here (context handles it)
+      // ROLE BASED REDIRECT
+      const role = res.data?.role;
 
-      // Redirect
-      if (res.data?.role === "ADMIN") {
+      if (role === "ADMIN") {
         navigate("/admin/dashboard");
       } else {
         navigate("/");
       }
-
     } catch (err) {
-      console.error("Login error:", err);
+      console.error(err);
       setError("Login failed. Please try again.");
     } finally {
       setLoading(false);
@@ -45,78 +52,70 @@ const Login = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>Login</h2>
+    <div className="container d-flex justify-content-center align-items-center vh-100">
+      <div className="card shadow-lg p-4" style={{ width: "380px" }}>
+        <h3 className="text-center mb-4 fw-bold">Login</h3>
 
-      {error && <p style={styles.error}>{error}</p>}
+        {error && (
+          <div className="alert alert-danger py-2 text-center">
+            {error}
+          </div>
+        )}
 
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          required
-          style={styles.input}
-        />
+        <form onSubmit={handleSubmit}>
+          {/* EMAIL */}
+          <div className="mb-3">
+            <input
+              type="email"
+              name="email"
+              className="form-control form-control-lg"
+              placeholder="Email"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          required
-          style={styles.input}
-        />
+          {/* PASSWORD */}
+          <div className="mb-3">
+            <input
+              type="password"
+              name="password"
+              className="form-control form-control-lg"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <button type="submit" style={styles.btn} disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
+          {/* BUTTON */}
+          <button
+            type="submit"
+            className="btn btn-primary w-100 btn-lg"
+            disabled={loading}
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+
+        {/* REGISTER LINK */}
+        <div className="text-center mt-3">
+          <small>
+            Don’t have an account?{" "}
+            <span
+              className="text-primary"
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate("/register")}
+            >
+              Register
+            </span>
+          </small>
+        </div>
+      </div>
     </div>
   );
 };
 
 export default Login;
 
-const styles = {
-  container: {
-    maxWidth: "400px",
-    margin: "40px auto",
-    padding: "20px",
-    border: "1px solid #cbd5e1",
-    borderRadius: "8px",
-    backgroundColor: "#f8fafc",
-  },
-  title: {
-    fontSize: "22px",
-    marginBottom: "15px",
-    textAlign: "center",
-    color: "#1e293b",
-  },
-  error: {
-    color: "red",
-    marginBottom: "10px",
-    textAlign: "center",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-  },
-  input: {
-    padding: "10px",
-    border: "1px solid #cbd5e1",
-    borderRadius: "4px",
-  },
-  btn: {
-    padding: "10px",
-    backgroundColor: "#2563eb",
-    color: "#fff",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-  },
-};
